@@ -90,6 +90,12 @@ setMenu(menu)
     self.prodigy["current"] = menu;
 }
 
+define_array(name)
+{
+    if(!isDefined(self.prodigy[name]))
+        self.prodigy[name] = [];
+}
+
 createText(font, fontScale, align, relative, x, y, sort, alpha, text, color)
 {
     font_string       = createFontString(font, fontScale);

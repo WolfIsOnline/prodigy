@@ -1,11 +1,6 @@
-#define HOVER_COLOR = color(0xFFFFFF);
-#define OPTION_COLOR = color(0xFFFFFF);
-#define HOVER_ALPHA = 1;
-#define OPTION_ALPHA = .3;
 #define PRODIGY_NAME = "^1Prodigy ^7Menu Base";
 #define PRODIGY_VERSION = "^3v1.0-alpha^7";
 #define PRODIGY_COPYRIGHT = "Made By ^3WolfIsOnline";
-#define SCROLL_SPEED = .1;
 
 init_prodigy()
 {
@@ -18,7 +13,7 @@ init_prodigy()
     self.prodigy["data"]["cursor"] = spawnStruct();
     self.prodigy["data"]["outline"] = spawnStruct();
     prodigy_options();
-    pd_theme();
+    t_prodigy();
     self endon("disconnect");
     while(true)
     {
@@ -32,16 +27,19 @@ init_prodigy()
         else if(isOpen() )
         {
        
-       	    if(self adsButtonPressed() || self attackButtonPressed() )     
+            if(self adsButtonPressed() || self attackButtonPressed() )     
             {
                 cursor = getCursor();
                 setPrevCursor(cursor);
+                
                 cursor += self attackButtonPressed();
                 cursor -= self adsButtonPressed();
+                
                 if(cursor < 0)
                     cursor = self.prodigy[getMenu()].option.size - 1;
                 if(cursor >= self.prodigy[getMenu()].option.size)
                     cursor = 0;
+                    
                 setCursor(cursor);
                 thread updateCursor();
                 wait SCROLL_SPEED;
@@ -180,11 +178,7 @@ setData(data)
     self.prodigy["data"]["outline"]._size = data[2]._size;
     self.prodigy["data"]["outline"].properties = data[2].properties;
 }
-define_array(name)
-{
-    if(!isDefined(self.prodigy[name]))
-        self.prodigy[name] = [];
-}
+
 
 getData()
 {
