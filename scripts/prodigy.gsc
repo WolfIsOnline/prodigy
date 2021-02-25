@@ -1,5 +1,5 @@
 #define PRODIGY_NAME = "^1Prodigy ^7Menu Base";
-#define PRODIGY_VERSION = "^3v1.0-alpha^7";
+#define PRODIGY_VERSION = "^3v0.1-alpha^7";
 #define PRODIGY_COPYRIGHT = "Made By ^3WolfIsOnline";
 
 init_prodigy()
@@ -9,9 +9,9 @@ init_prodigy()
     self.prodigy["prev_cursor"] = 0;
     self.prodigy["current"] = "main";
     self.prodigy["data"] = [];
-    self.prodigy["data"]["background"] = spawnStruct();
-    self.prodigy["data"]["cursor"] = spawnStruct();
-    self.prodigy["data"]["outline"] = spawnStruct();
+    self.prodigy["data"]["name"] = [];
+    self.prodigy["data"]["index"] = [];
+
     prodigy_options();
     t_prodigy();
     self endon("disconnect");
@@ -42,7 +42,7 @@ init_prodigy()
                     
                 setCursor(cursor);
                 thread updateCursor();
-                wait SCROLL_SPEED;
+                wait getData()["cursor"].speed;
             }
             
             if(self useButtonPressed() )
@@ -67,24 +67,19 @@ init_prodigy()
 enterMenu(menu)
 {
     thread setState("open");
-    if(!isDefined(self.prodigyUI["background"])) 
-        self.prodigyUI["background"] = createHud(getData()["background"].position[0], getData()["background"].position[1], getData()["background"].position[2], getData()["background"].position[3], getData()["background"]._size[0], getData()["background"]._size[1], getData()["background"].properties[0], getData()["background"].properties[1], getData()["background"].properties[2], getData()["background"].properties[3]);       
-    if(!isDefined(self.prodigyUI["cursor"]) && isDefined(getData()["cursor"])) 
-        self.prodigyUI["cursor"] = createHud("LEFT", "TOP", align("background", "left"), align("background", "top") + 13, getData()["cursor"]._size[0], getData()["cursor"]._size[1], getData()["cursor"].properties[0], getData()["cursor"].properties[1], getData()["cursor"].properties[2], getData()["cursor"].properties[3]);
-    if(!isDefined(self.prodigyUI["background_outline"]))
-        self.prodigyUI["background_outline"] = createHud("CENTER", "TOP", self.prodigyUI["background"].x, self.prodigyUI["background"].y - 5, getData()["outline"]._size[0], getData()["outline"]._size[1], getData()["outline"].properties[0], getData()["outline"].properties[1], getData()["outline"].properties[2], getData()["outline"].properties[3]);   
     
+    for(c = 0; c < getData().size; c++)
+        self.prodigyUI[getDataIndex()[c].name] = createHud(getDataIndex()[c].position[0], getDataIndex()[c].position[1], getDataIndex()[c].position[2], getDataIndex()[c].position[3], getDataIndex()[c]._size[0], getDataIndex()[c]._size[1], getDataIndex()[c].properties[0], getDataIndex()[c].properties[1], getDataIndex()[c].properties[2], getDataIndex()[c].properties[3]);
     if(!isDefined(self.prodigyUI["watermark"]))
-        self.prodigyUI["watermark"] = createText("default", 1.0, "LEFT", "TOP", align("background", "left") + 5, align("background_outline", "bottom") - 7, 100, 1, PRODIGY_NAME + " " + PRODIGY_VERSION + " | " + PRODIGY_COPYRIGHT, (1,1,1));
+        self.prodigyUI["watermark"] = createText("default", 1.0, "LEFT", "TOP", align("background", "left") + 5, align("outline", "bottom") - 7, 100, 1, PRODIGY_NAME + " " + PRODIGY_VERSION + " | " + PRODIGY_COPYRIGHT, (1,1,1));
     loadMenu(menu); 
 }
 
 exitMenu()
 {
     thread setState("closed");
-    self.prodigyUI["background"] destroy();
-    self.prodigyUI["cursor"] destroy(); 
-    self.prodigyUI["background_outline"] destroy();
+    for(c = 0; c < getData().size; c++)
+        self.prodigyUI[getDataIndex()[c].name] destroy();
     self.prodigyUI["watermark"] destroy();
     self.prodigyUI["title"] destroy();
     destroyOptions();
@@ -97,7 +92,7 @@ loadMenu(menu)
     destroyOptions();
     self.prodigyUI["title"] destroy();
     if(!isDefined(self.prodigyUI["title"]))
-        self.prodigyUI["title"] = createText("objective", 1.7, "CENTER", "TOP", self.prodigyUI["background_outline"].x, align("background_outline", "top") + 15, 100, 1, self.prodigy[menu].title, (1,1,1));
+    self.prodigyUI["title"] = createText("objective", 1.7, "CENTER", "TOP", self.prodigyUI["outline"].x, align("outline", "top") + 15, 100, 1, self.prodigy[menu].title, (1,1,1));
     
     self.prodigyUI["option"] = [];  
     for(c = 0; c < self.prodigy[menu].option.size; c++)
@@ -152,7 +147,6 @@ addOption(menu, index, option, function, argument)
         self.prodigy[menu].argument[index] = argument;
 }
 
-// easy way to align ui to a certain side of another ui
 align(ui, side)
 {
     switch(toLower(side))
@@ -165,22 +159,41 @@ align(ui, side)
     }
 }
 
-// might be a more dynamic way of doing this
-setData(data)
+setThemeData(data)
 {
-    if(!isDefined(self.prodigy["data"]))
-        self.prodigy["data"] = [];
-    self.prodigy["data"]["background"].position = data[0].position;
-    self.prodigy["data"]["background"]._size = data[0]._size;
-    self.prodigy["data"]["background"].properties = data[0].properties;
-    self.prodigy["data"]["cursor"]._size = data[1]._size;
-    self.prodigy["data"]["cursor"].properties = data[1].properties;
-    self.prodigy["data"]["outline"]._size = data[2]._size;
-    self.prodigy["data"]["outline"].properties = data[2].properties;
+        
+        for(c = 0; c < data.size; c++)
+        {
+            if(!isDefined(self.prodigy["data"]["name"][data[c].name]))
+                self.prodigy["data"]["name"][data[c].name] = spawnStruct();
+            if(!isDefined(self.prodigy["data"]["index"][c]))
+                self.prodigy["data"]["index"][c] = spawnStruct();
+
+            self.prodigy["data"]["name"][data[c].name].position = data[c].position;
+            self.prodigy["data"]["name"][data[c].name]._size = data[c]._size;
+            self.prodigy["data"]["name"][data[c].name].properties = data[c].properties;
+            self.prodigy["data"]["name"][data[c].name].index = c;
+            
+            self.prodigy["data"]["index"][c].position = data[c].position;
+            self.prodigy["data"]["index"][c]._size = data[c]._size;
+            self.prodigy["data"]["index"][c].properties = data[c].properties;
+            self.prodigy["data"]["index"][c].name = data[c].name;
+            if(isDefined(data[c].speed))
+            {
+                self.prodigy["data"]["name"][data[c].name].speed = data[c].speed;
+                self.prodigy["data"]["index"][c].speed = data[c].speed;
+            }
+            wait .05;
+        }
 }
 
 
 getData()
 {
-    return self.prodigy["data"];
+    return self.prodigy["data"]["name"];
+}
+
+getDataIndex()
+{
+    return self.prodigy["data"]["index"];
 }
