@@ -1,20 +1,35 @@
 /*
-    ui_name_here.position = [align, relative, x, y]
-    ui_name_here._size = [width, height]
-    ui_name_here.properties = [color, shader, sort, alpha]
+    * = Required variables
+    Hud usage:
+    * hud_name.name       = hud_name;
+    * hud_name.position   = [align, relative, x, y];
+    * hud_name._size      = [width, height];
+    * hud_name.properties = [color, shader, sort, alpha];
+    
+    Text Usage:
+    * text_name.position   = [align, relative, x,y];
+    
+    - if the name is "options" it will display the options of the menu.
+    - if the name is "title" it will display the name of the current menu that is selected.
+    * text_name.name       = string_name;
+    * text_name.properties = [font name, font size, sort, alpha];
+    * text_name.text = text;
+    
+    - text_color and glow_color are not required. 
+    - You can use one or both of them
+    - if text_color is undefined then the color will be white
+    - glow_color will remain undefined if it is not defined
+    
+      text_name.color = [text_color, glow_color]; 
 */
-
-#define HOVER_COLOR = color(0xFFFFFF);
-#define OPTION_COLOR = color(0xFFFFFF);
-#define HOVER_ALPHA = 1;
-#define OPTION_ALPHA = .3;
 
 t_prodigy()
 {
     background = spawnStruct();
     cursor     = spawnStruct();
     outline    = spawnStruct();
-    test       = spawnStruct();
+    options    = spawnStruct();
+    textTest   = spawnStruct();
     
     //Menu background
     background.name       = "background";
@@ -30,11 +45,19 @@ t_prodigy()
     
     //Menu cursor/selector
     cursor.name       = "cursor";
-    cursor.position   = ["CENTER", "TOP", background.position[2], background.position[3] + (background._size[1] / -2) ];
     cursor._size      = [background._size[0], 25];
+    cursor.position   = ["CENTER", "TOP", background.position[2], background alignment("top") + (cursor._size[1] / 2)];
     cursor.properties = [color(0x1B222C), "white", 3, 1];
     cursor.speed      = .1;
     
-    data = [background, cursor, outline]; // must add ui to the array or else it won't build
+    // Options Text
+    options.name        = "options";
+    options.position    = ["LEFT", "TOP", cursor alignment("left") + 4, cursor.position[3]];
+    options.properties  = ["default", 1.3, 100, .3];
+    options.spacing     = 25;
+    options.hover_color = color(0xFFFFFF);
+    options.hover_alpha = 1;
+    
+    data = [background, cursor, outline, options];
     setThemeData(data);
 }
