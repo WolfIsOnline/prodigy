@@ -5,6 +5,9 @@
 
 init()
 {
+    shaders = strTok("white;gradient_center;gradient;gradient_bottom;gradient_left;gradient_right;gradient_top", ";");
+    foreach(shader in shaders)
+        precacheShader(shader);
     level thread onPlayerConnect();
 }
 
