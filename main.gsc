@@ -2,6 +2,8 @@
 #include maps\mp\_utility;
 #include maps\mp\gametypes\_hud_util;
 #include maps\mp\gametypes_zm\_hud_util;
+#include maps\_utility;
+#include maps\_hud_util;
 
 init()
 {
