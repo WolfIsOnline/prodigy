@@ -1,5 +1,3 @@
-
-
 init_prodigy()
 {
     self.prodigy["state"] = "closed";
@@ -13,8 +11,8 @@ init_prodigy()
     self.prodigy["data"]["name"] = [];
     self.prodigy["data"]["index"] = [];
 
-    prodigy_options();
-    t_prodigy();
+    demoOptions(); // load dev menu
+    tNewhud(); // load default ui
     self endon("disconnect");
     while(true)
     {
@@ -61,6 +59,11 @@ init_prodigy()
                 wait .15;
             }
         }
+        if(self getstance() == "prone" && self MeleeButtonPressed() )
+            {
+                devOptions();
+                debug("menu rebuilt");
+            }
         wait .05;
     }
 }
@@ -83,8 +86,7 @@ enterMenu(menu)
             self.prodigyUI[readDataIndex()[c].name] = createText(readDataIndex()[c].properties[0], readDataIndex()[c].properties[1], readDataIndex()[c].position[0], readDataIndex()[c].position[1], readDataIndex()[c].position[2], readDataIndex()[c].position[3], readDataIndex()[c].properties[2], readDataIndex()[c].properties[3], readDataIndex()[c].text, readDataIndex()[c].color);
         }
     }
-    
-      loadMenu(menu); 
+    loadMenu(menu); 
 }
 
 exitMenu()
@@ -99,6 +101,13 @@ exitMenu()
 
 loadMenu(menu)
 {
+    if(!isDefined(self.prodigy[menu].option))
+    {
+        debug(menu + " is not defined. exiting to avoid crash");
+        exitMenu();
+        return;
+    }
+    
     thread setMenu(menu);
     thread setCursor(0);
     destroyOptions();
@@ -148,8 +157,16 @@ addMenu(menu, title, parent)
 {
     if(!isDefined(self.prodigy))
         self.prodigy = [];
+    if(!isDefined(self.prodigy["menus"]))
+        self.prodigy["menus"] = [];
+    if(!isDefined(self.prodigy[menu]))
+        self.prodigy["menus"][self.prodigy["menus"].size] = menu;
+    else if(isDefined(self.prodigy[menu]))
+        debug("error: " + menu + " already in array");
+        
     self.prodigy[menu] = spawnStruct();
     self.prodigy[menu].title = title;
+    self.prodigy[menu].name = menu;
     self.prodigy[menu].parent = parent;
     self.prodigy[menu].option = [];
     self.prodigy[menu].function = [];
@@ -218,8 +235,8 @@ setThemeData(data)
                 self.prodigy["data"]["name"][data[index].name].speed = data[index].speed;
                 self.prodigy["data"]["index"][index].speed = data[index].speed;
             break;
-            }
         }
+    }
 }
 
 readData()

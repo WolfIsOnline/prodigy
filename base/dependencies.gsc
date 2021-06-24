@@ -9,7 +9,7 @@
 
 /*
     * better than using my convert_rgb(color) function
-    * script made by serious
+    * made by serious
     * taken from serious-gsc.gsc > https://github.com/seriousyt/iw-gsc-util/blob/master/serious-gsc.gsc
 */
 color(value)
@@ -28,12 +28,7 @@ color(value)
         vector: Min: 13, Max: 16
     */
 
-    return
-    (
-    (value & 0xFF0000) / 0xFF0000,
-    (value & 0x00FF00) / 0x00FF00,
-    (value & 0x0000FF) / 0x0000FF
-    );
+    return((value & 0xFF0000) / 0xFF0000, (value & 0x00FF00) / 0x00FF00, (value & 0x0000FF) / 0x0000FF);
 }
 
 setPrevCursor(position)
@@ -88,12 +83,6 @@ getMenu()
 setMenu(menu)
 {
     self.prodigy["current"] = menu;
-}
-
-define_array(name)
-{
-    if(!isDefined(self.prodigy[name]))
-        self.prodigy[name] = [];
 }
 
 createText(font, fontScale, align, relative, x, y, sort, alpha, text, color)
@@ -210,9 +199,4 @@ isText(struct)
     if(isString(struct.properties[1]))
         return false;
     return true;
-}
-
-Cbuf_AddText_BO2_ZM(input)
-{
-  RPC(0x005BDF70,0,input);
 }
