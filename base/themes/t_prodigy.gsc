@@ -1,33 +1,67 @@
 /*
-    Hud usage:
-    hud_name.name       = hud_name;
-    hud_name.position   = [align, relative, x, y];
-    hud_name._size      = [width, height];
-    hud_name.properties = [color, shader, sort, alpha];
+    #### Small tutorial on how to build custom themes in prodigy ####
+    * = required variblaes
     
-    Text Usage:
-    text_name.position = [align, relative, x,y];
+    * this allows the menu to reference your hud when it needs to.
+    hud_name.name       = hud_name; - this allows the menu to reference your hud when it needs to
     
+    * align - choose from LEFT, RIGHT, TOP, BOTTOM
+    * relative - choose from LEFT, RIGHT, TOP, BOTTOM
+    * x - allows you to position the hud from left to right on an axis
+    * y - allows you to position the hud from top to bottom on an axis
+    hud_name.position = [align, relative, x, y]; 
+    
+    * width - the width of the hud
+    * height - the height of the hud
+    hud_name._size = [width, height];
+    
+    * color - the color of your hud, use color(value) to use hex colors
+    * shader - can choose from a list of shaders, 
+    * sort - can think of this as a z axis
+    * alpha - basically the opacity of the hud
+    hud_name.properties = [color, shader, sort, alpha]; 
+    
+    
+    #### Small tutorial on how to use text with themes, the base can distinguish between a normal hud and a text hud ####
+    
+    * align - choose from LEFT, RIGHT, TOP, BOTTOM
+    * relative - choose from LEFT, RIGHT, TOP, BOTTOM
+    * x - allows you to position the hud from left to right on an axis
+    * y - allows you to position the hud from top to bottom on an axis
+    text_name.position = [align, relative, x, y];
+    
+    * this allows the menu to reference your hud when it needs to.
     - if the name is "options" it will display the options of the menu.
     - if the name is "title" it will display the name of the current menu that is selected.
     text_name.name = string_name;
     
+    * font name - this is the font type, can choice between default, objective, bigfixed and smallfixed.
+    * font size - the size of the font
+    * sort - can think of this as a z axis
+    * alpha - basically the opacity of the hud
     text_name.properties = [font name, font size, sort, alpha];
+    
+    * what the text will read
     text_name.text       = text;
     
+
+    
+    These are optional:
     - text_color and glow_color are not required. 
     - You can use one or both of them
     - if text_color is undefined then the color will be white
     - glow_color will remain undefined if it is not defined
-    
       text_name.color = [text_color, glow_color]; 
+      
+    At the end of your theme file, you must pass your struct into setThemeData(data) for the menu to display it.
+    See below for an example.
 */
   
 #define PRODIGY_NAME = "^1Prodigy ^7Menu Base";
 #define PRODIGY_VERSION = "^3v0.2-alpha^7";
 #define PRODIGY_COPYRIGHT = "Made By ^3WolfIsOnline";
 
-t_prodigy()
+tProdigy()
 {
     background            = spawnStruct();
     background.name       = "background";
@@ -67,6 +101,6 @@ t_prodigy()
     watermark.properties = ["default", 1.0, 100, 1];
     watermark.text       = PRODIGY_NAME + " " + PRODIGY_VERSION + " | " + PRODIGY_COPYRIGHT;
     
-     data = [background, cursor, outline, options, title, watermark];
-     setThemeData(data);
+    data = [background, cursor, outline, options, title, watermark];
+    setThemeData(data);
 }
