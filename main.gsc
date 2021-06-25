@@ -7,31 +7,28 @@
 
 init()
 {
-    shaders = strTok("white;gradient_center;gradient;gradient_bottom;gradient_left;gradient_right;gradient_top", ";");
-    foreach(shader in shaders)
-        precacheShader(shader);
-    level thread onPlayerConnect();
+    level thread player_connected();
 }
 
-onPlayerConnect()
+player_connected()
 {
     for(;;)
     {
         level waittill("connected", player);
-        player thread onPlayerSpawned();
+        player thread player_spawned();
     }
 }
 
-onPlayerSpawned()
+player_spawned()
 {
     self endon("disconnect");
     level endon("game_ended");
     for(;;)
     {
         self waittill("spawned_player");
-        if(isDefined(self.playerSpawned))
+        if(isDefined(self.spawned))
             continue;
-        self.playerSpawned = true;
+        self.spawned = true;
 
         self freezeControls(false);
         self thread init_prodigy();

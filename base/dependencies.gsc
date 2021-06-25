@@ -31,61 +31,61 @@ color(value)
     return((value & 0xFF0000) / 0xFF0000, (value & 0x00FF00) / 0x00FF00, (value & 0x0000FF) / 0x0000FF);
 }
 
-setPrevCursor(position)
+set_prev_cursor(position)
 {
     self.prodigy["prev_cursor"] = position;
 }
 
-getPrevCursor()
+get_prev_cursor()
 {
     return self.prodigy["prev_cursor"];
 }
 
-setCursor(position)
+set_cursor(position)
 {
     self.prodigy["cursor"] = position;
 }
 
-getCursor()
+get_cursor()
 {
     return self.prodigy["cursor"];
 }
 
-isClosed()
+is_closed()
 {
     if(self.prodigy["state"] == "closed")
         return true;
     return false;
 }
 
-isOpen()
+is_open()
 {
     if(self.prodigy["state"] == "open")
         return true;
     return false;
 }
 
-setState(state)
+set_state(state)
 {
     self.prodigy["state"] = state;
 }
 
-getState()
+get_state()
 {
     return self.prodigy["state"];
 }
 
-getMenu()
+get_menu()
 {
     return self.prodigy["current"];
 }
 
-setMenu(menu)
+set_menu(menu)
 {
     self.prodigy["current"] = menu;
 }
 
-createText(font, fontScale, align, relative, x, y, sort, alpha, text, color)
+create_text(font, fontScale, align, relative, x, y, sort, alpha, text, color)
 {
     font_string       = createFontString(font, fontScale);
     font_string.sort  = sort;
@@ -96,7 +96,7 @@ createText(font, fontScale, align, relative, x, y, sort, alpha, text, color)
     return font_string;
 }
 
-createHud(align, relative, x, y, width, height, color, shader, sort, alpha)
+create_hud(align, relative, x, y, width, height, color, shader, sort, alpha)
 {
     hud          = newClientHudElem(self);
     hud.elemType = "bar";
@@ -117,7 +117,7 @@ createHud(align, relative, x, y, width, height, color, shader, sort, alpha)
     return hud;
 }
 
-createServerHud(align, relative, x, y, width, height, color, shader, sort, alpha)
+create_server_hud(align, relative, x, y, width, height, color, shader, sort, alpha)
 {
     hud          = newHudElem(self);
     hud.elemType = "bar";
@@ -148,9 +148,16 @@ test()
 {
 }
 
-debug(output)
+debug(oLevel, output)
 {
-    self iPrintln(yellow + "[PRODIGY]" + white + " > " + output);
+    switch(toLower(oLevel))
+    {
+        case "success": type = GREEN + "[PRODIGY] SUCCESS"; break;
+        case "warn": type = YELLOW + "[PRODIGY] WARNING"; break;
+        case "error": type = RED + "[PRODIGY] ERROR"; break;
+        default: type = WHITE + "[PRODIGY] OUTPUT"; break;
+    }
+    self iPrintln(type  + " --- " + output);
 }
 
 /*
@@ -182,19 +189,7 @@ alignment(point)
     }
 }
 
-isCustom(struct)
-{
-    array = strTok("options;title;background;cursor;outline", ";");
-    for(c = 0; c < array.size; c++)
-    {
-        if(struct.name != array[c])
-            continue;
-        return false;
-    }
-    return true;
-}
-
-isText(struct)
+is_text(struct)
 {
     if(isString(struct.properties[1]))
         return false;
