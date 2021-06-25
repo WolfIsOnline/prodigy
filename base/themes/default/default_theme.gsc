@@ -2,56 +2,57 @@
     #### Small tutorial on how to build custom themes in prodigy ####
     * = required variblaes
     
-    * this allows the menu to reference your hud when it needs to.
-    hud_name.name       = hud_name; - this allows the menu to reference your hud when it needs to
     
-    * align - choose from LEFT, RIGHT, TOP, BOTTOM
-    * relative - choose from LEFT, RIGHT, TOP, BOTTOM
+    hud_name.name       = hud_name; - this allows the menu to reference your hud when it needs to
+    * this allows the menu to reference your hud when it needs to.
+
+    hud_name.position = [align, relative, x, y]; 
+    * align - the aligment of the hud
+    * relative - the relative positon of the hud
     * x - allows you to position the hud from left to right on an axis
     * y - allows you to position the hud from top to bottom on an axis
-    hud_name.position = [align, relative, x, y]; 
     
+    hud_name._size = [width, height];
     * width - the width of the hud
     * height - the height of the hud
-    hud_name._size = [width, height];
     
-    * color - the color of your hud, use color(value) to use hex colors
-    * shader - can choose from a list of shaders, 
-    * sort - can think of this as a z axis
-    * alpha - basically the opacity of the hud
     hud_name.properties = [color, shader, sort, alpha]; 
+    * color - the color of your hud, use color(value) to use hex colors
+    * shader - use a precached image, different call of duties have different shaders
+    * sort - can think of this as a z axis on a 2D plane
+    * alpha - the opacity of the hud
     
     
     #### Small tutorial on how to use text with themes, the base can distinguish between a normal hud and a text hud ####
     
-    * align - choose from LEFT, RIGHT, TOP, BOTTOM
-    * relative - choose from LEFT, RIGHT, TOP, BOTTOM
+    text_name.position = [align, relative, x, y];
+    * align - the aligment of the hud
+    * relative - the relative positon of the hud
     * x - allows you to position the hud from left to right on an axis
     * y - allows you to position the hud from top to bottom on an axis
-    text_name.position = [align, relative, x, y];
     
+    text_name.name = string_name;
     * this allows the menu to reference your hud when it needs to.
     - if the name is "options" it will display the options of the menu.
     - if the name is "title" it will display the name of the current menu that is selected.
-    text_name.name = string_name;
     
+    text_name.properties = [font name, font size, sort, alpha];
     * font name - this is the font type, can choice between default, objective, bigfixed and smallfixed.
     * font size - the size of the font
-    * sort - can think of this as a z axis
-    * alpha - basically the opacity of the hud
-    text_name.properties = [font name, font size, sort, alpha];
+    * sort - can think of this as a z axis on a 2D plane
+    * alpha - the opacity of the hud
     
-    * what the text will read
     text_name.text       = text;
+    * what the text will display
     
 
     
-    These are optional:
+    This is optional optional:
+      text_name.color = [text_color, glow_color]; 
     - text_color and glow_color are not required. 
     - You can use one or both of them
     - if text_color is undefined then the color will be white
     - glow_color will remain undefined if it is not defined
-      text_name.color = [text_color, glow_color]; 
       
     At the end of your theme file, you must pass your struct into set_theme_data(data) for the menu to display it.
     See below for an example.
