@@ -17,9 +17,7 @@ init_prodigy()
     self.prodigy["data"] = [];
     self.prodigy["data"]["name"] = [];
     self.prodigy["data"]["index"] = [];
-
-    dev_tools(); // load dev menu
-    t_prodigy(); // load default theme
+    start_theme();
     thread control_loop();
 }
 
@@ -30,7 +28,8 @@ enter_menu(menu)
     for(c = 0; c < read_data().size; c++)
     {
         if(!is_text(read_data_index()[c]))
-        self.prodigyUI[read_data_index()[c].name] = create_hud(read_data_index()[c].position[0], read_data_index()[c].position[1], read_data_index()[c].position[2], read_data_index()[c].position[3], read_data_index()[c]._size[0], read_data_index()[c]._size[1], read_data_index()[c].properties[0], read_data_index()[c].properties[1], read_data_index()[c].properties[2], read_data_index()[c].properties[3]);
+            self.prodigyUI[read_data_index()[c].name] = create_hud(read_data_index()[c].position[0], read_data_index()[c].position[1], read_data_index()[c].position[2], read_data_index()[c].position[3], read_data_index()[c]._size[0], read_data_index()[c]._size[1], read_data_index()[c].properties[0], read_data_index()[c].properties[1], read_data_index()[c].properties[2], read_data_index()[c].properties[3]);
+            
         else if(is_text(read_data_index()[c]) && read_data_index()[c].name != "options")
         {
             if(!isDefined(read_data_index()[c].color))
@@ -54,12 +53,29 @@ exit_menu()
     destroy_options();
 }
 
+/*
+    * loading a menu that doesn't exist could crash the game
+    * this will attempt to load it, if it fails it will load the parent menu
+    * if it can't load the parent menu it will attempt to load the root of the menu
+    * if it can't load the root of the menu it will exit the menu completely
+*/
+try_load_menu(menu)
+{
+    
+}
+
 load_menu(menu)
 {
     if(!isDefined(self.prodigy[menu].option))
     {
-        debug("error", menu + " is not defined. exiting to avoid crash");
-        exit_menu();
+        debug("error", menu + " is not defined. attempting to reload parent menu");
+        if(!isDefined(self.prodigy[get_menu()].parent))
+        {
+            debug("error", "could not load parent menu. attempting to load main");
+            exit_menu();
+        }
+        else 
+            load_menu(self.prodigy[get_menu()].parent);
         return;
     }
     
@@ -89,6 +105,7 @@ load_menu(menu)
             self.prodigyUI["option"][c] = create_text(read_data()["options"].properties[0], read_data()["options"].properties[1], read_data()["options"].position[0], read_data()["options"].position[1], read_data()["options"].position[2], (read_data()["options"].position[3] + (c * read_data()["options"].spacing)), read_data()["options"].properties[2], read_data()["options"].properties[3], self.prodigy[menu].option[c], read_data()["options"].color);
     }
     thread update_cursor();
+    return true;
 }
     
 destroy_options()
@@ -113,14 +130,12 @@ add_menu(menu, title, parent)
 {
     if(!isDefined(self.prodigy))
         self.prodigy = [];
-    if(!isDefined(self.prodigy["menus"]))
-        self.prodigy["menus"] = [];
-    if(!isDefined(self.prodigy[menu]))
-        self.prodigy["menus"][self.prodigy["menus"].size] = menu;
-        
+    
+    if(!isDefined(self.prodigy["menu"]))
+        self.prodigy["menu"] = [];
+    self.prodigy["menu"] = ArrayAdd(self.prodigy["menu"], menu, false);
     self.prodigy[menu] = spawnStruct();
     self.prodigy[menu].title = title;
-    self.prodigy[menu].name = menu;
     self.prodigy[menu].parent = parent;
     self.prodigy[menu].option = [];
     self.prodigy[menu].function = [];
@@ -162,7 +177,19 @@ update_option(menu, index, option, function, argument1, argument2, argument3, ar
     if(isDefined(argument5)) self.prodigy[menu].argument5[index] = argument5;
     
     self.prodigyUI["option"][index] destroy(); 
-    self.prodigyUI["option"][index] = create_text(read_data()["options"].properties[0], read_data()["options"].properties[1], read_data()["options"].position[0], read_data()["options"].position[1], read_data()["options"].position[2], (read_data()["options"].position[3] + (index * read_data()["options"].spacing)), read_data()["options"].properties[2], read_data()["options"].properties[3], option, read_data()["options"].color);
+    self.prodigyUI["option"][index] = create_text
+    (
+        read_data()["options"].properties[0], 
+        read_data()["options"].properties[1], 
+        read_data()["options"].position[0], 
+        read_data()["options"].position[1], 
+        read_data()["options"].position[2], 
+        (read_data()["options"].position[3] + (index * read_data()["options"].spacing)), 
+        read_data()["options"].properties[2], 
+        read_data()["options"].properties[3], 
+        option, 
+        read_data()["options"].color
+    );
     update_cursor();
 }
 
@@ -237,24 +264,24 @@ read_data_index()
 // This can crash the game if used incorrectly
 flush_memory()
 {
-    if(!isDefined(self.prodigy["menus"])) return;
-    
+    if(!isDefined(self.prodigy["menu"]))
+        return;
+        
     state = get_state();
     set_state("locked");
-    for(c = 0; c < self.prodigy["menus"].size; c++)
+    for(c = 0; c < self.prodigy["menu"].size; c++)
     {
-        self.prodigy[self.prodigy["menus"][c]].option = undefined;
-        self.prodigy[self.prodigy["menus"][c]].function = undefined;
-        self.prodigy[self.prodigy["menus"][c]].argument = undefined;
+        self.prodigy[self.prodigy["menu"][c]].option = undefined;
+        self.prodigy[self.prodigy["menu"][c]].function = undefined;
+        self.prodigy[self.prodigy["menu"][c]].argument1 = undefined;
+        self.prodigy[self.prodigy["menu"][c]].argument2 = undefined;
+        self.prodigy[self.prodigy["menu"][c]].argument3 = undefined;
+        self.prodigy[self.prodigy["menu"][c]].argument4 = undefined;
+        self.prodigy[self.prodigy["menu"][c]].argument5 = undefined;
     }
+    
+    for(c = 0; c < self.prodigy["menu"].size; c++)
+        self.prodigy["menu"] = ArrayRemove(self.prodigy["menu"], self.prodigy["menu"][c]);
     set_state(state);
     debug("warn", "memory flushed");
-}
-
-load_options(load)
-{
-    exit_menu();
-    flush_memory();
-    [[load]]();
-    enter_menu("main");
 }

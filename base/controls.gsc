@@ -14,7 +14,7 @@ control_loop()
         {
             if(self FragButtonPressed() && is_closed() ) 
                 thread enter_menu("main");
-       }
+        }
             
         else if(is_open() )
         {
@@ -60,10 +60,17 @@ control_loop()
             }
         }
         
+        if(self secondaryoffhandbuttonpressed() )
+        {
+            
+            display_option_count();
+        }
+        
         // rescue system incase you flush the memory
         if(self getstance() == "prone" && self MeleeButtonPressed() && self secondaryoffhandbuttonpressed() )
         {
-            dev_tools();
+            dev_menu();
+            debug("success", "dev menu activated");
             wait .15;
         }
         wait .05;
