@@ -66,7 +66,6 @@ ArrayAdd(array, item, allow_dupes = 1)
         if(allow_dupes || !IsInArray(array, item))
         {
             array[array.size] = item;
-            debug("success", item + " added to array");
         }
     }
     return array;
@@ -95,8 +94,7 @@ ArrayRemove(array, value)
     
     foreach(elem in array)
         if(value != elem)
-            a_new[a_new.size] = elem;
-    debug("success", value + " removed from array");        
+            a_new[a_new.size] = elem;      
     return a_new;
 }
 

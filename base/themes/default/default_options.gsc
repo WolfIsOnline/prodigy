@@ -26,7 +26,7 @@ dev_menu()
    
     menu = "testing"; 
     add_menu(menu, "Testing Menu", "main");
-    add_option(menu, "Change me to 'hi'", ::update_option, "main", 1, "hi");    
+    add_option(menu, "Change me to 'hi'", ::update_option, menu, get_cursor(), "hi");    
 }
 
 display_menu_count()

@@ -48,57 +48,40 @@ exit_menu()
     thread set_state("closed");
     for(c = 0; c < read_data().size; c++)
         self.prodigyUI[read_data_index()[c].name] destroy();
-    self.prodigyUI["watermark"] destroy();
     self.prodigyUI["title"] destroy();
     destroy_options();
-}
-
-/*
-    * loading a menu that doesn't exist could crash the game
-    * this will attempt to load it, if it fails it will load the parent menu
-    * if it can't load the parent menu it will attempt to load the root of the menu
-    * if it can't load the root of the menu it will exit the menu completely
-*/
-try_load_menu(menu)
-{
-    
 }
 
 load_menu(menu)
 {
-    if(!isDefined(self.prodigy[menu].option))
+    if(!IsInArray(self.prodigy["menu"], menu))
     {
-        debug("error", menu + " is not defined. attempting to reload parent menu");
-        if(!isDefined(self.prodigy[get_menu()].parent))
-        {
-            debug("error", "could not load parent menu. attempting to load main");
-            exit_menu();
-        }
-        else 
-            load_menu(self.prodigy[get_menu()].parent);
-        return;
+        debug("error", "can't load '" + menu + "' exiting load_menu()");
+        return false;
     }
     
     thread set_menu(menu);
     thread set_cursor(0);
-    destroy_options();
-    self.prodigyUI["title"] destroy();
+    
+    
     if(!isDefined(read_data()["title"].color))
     {
         self.prodigy["data"]["name"]["title"].color = color(0xFFFFFF);
         self.prodigy["data"]["index"]["title"].color = color(0xFFFFFF);
     }
     
-    if(!isDefined(self.prodigyUI["title"]))
-        self.prodigyUI["title"] = create_text(read_data()["title"].properties[0], read_data()["title"].properties[1], read_data()["title"].position[0], read_data()["title"].position[1], read_data()["title"].position[2], read_data()["title"].position[3], read_data()["title"].properties[2], read_data()["title"].properties[3], self.prodigy[menu].title, read_data()["title"].color);
-    
-    self.prodigyUI["option"] = [];  
     if(!isDefined(read_data()["options"].color))
     {
         self.prodigy["data"]["name"]["options"].color = color(0xFFFFFF);
         self.prodigy["data"]["index"]["options"].color = color(0xFFFFFF);
     }
     
+    self.prodigyUI["title"] destroy();
+    if(!isDefined(self.prodigyUI["title"]))
+        self.prodigyUI["title"] = create_text(read_data()["title"].properties[0], read_data()["title"].properties[1], read_data()["title"].position[0], read_data()["title"].position[1], read_data()["title"].position[2], read_data()["title"].position[3], read_data()["title"].properties[2], read_data()["title"].properties[3], self.prodigy[menu].title, read_data()["title"].color);
+    
+    destroy_options();
+    self.prodigyUI["option"] = []; 
     for(c = 0; c < self.prodigy[menu].option.size; c++)
     {
         if(!isDefined(self.prodigyUI["option"][c]))

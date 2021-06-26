@@ -16,7 +16,7 @@ load_theme(theme_function, option_function, enter = true)
 {
     if(!isDefined(self.prodigy["data"]["theme"])) self.prodigy["data"]["theme"] = [];
     
-    // Lazy way to do this, I am working on a way to add, remove and edit data in the array more easily and neater way.
+    // This is a lazy way to do this
     self.prodigy["data"]["theme"][0] = theme_function;
     self.prodigy["data"]["theme"][1] = option_function;
     exit_menu();
